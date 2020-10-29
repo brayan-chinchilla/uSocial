@@ -1,11 +1,10 @@
-import { Router } from 'express';
-import UserRouter from './Users';
-
-// Init router and path
+import { Router } from "express";
 const router = Router();
 
-// Add sub-routes
-router.use('/users', UserRouter);
+import userRoutes from "./user.route";
+import studentRoutes from "./student.route";
 
-// Export the base-router
+router.use('/users', userRoutes);
+router.use('/students', studentRoutes);
+
 export default router;
