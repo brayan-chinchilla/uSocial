@@ -53,11 +53,9 @@
   /* ------------------------------- */
   /* Cardbox Item
   ---------------------------------- */
-  .cardbox .cardbox-item {
-      position: relative;
-      display: block;
-  }
+ 
   .cardbox .cardbox-item img{
+    max-height: 300px;
   }
   .img-responsive{
       display: block;
