@@ -1,1 +1,75 @@
-<p>login works!</p>
+<div class="sidenav">
+  <div class="login-main-text">
+    <h1>uSocial</h1>
+    <h5>Inicia sesión o crea una cuenta para acceder.</h5>
+  </div>
+</div>
+<div class="main">
+  <div class="col-md-6 col-sm-12">
+    <div class="login-form" *ngIf="!showRegister else RegisterForm">
+      <h1>Iniciar sesión</h1>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmitLogin(loginForm.value)">
+        <div class="form-group">
+          <label>Nombre de usuario</label>
+          <input formControlName="username" type="text" class="form-control"
+            placeholder="Escribe tu nombre de usuario...">
+        </div>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input formControlName="password" type="password" class="form-control" placeholder="Escribe tu contraseña...">
+        </div>
+        <div class="row">
+          <div class="col">
+            <button type="button" class="btn btn-secondary btn-block" (click)="goToRegister()">Crear una cuenta</button>
+          </div>
+          <div class="col">
+            <button type="submit" class="btn btn-black btn-block">Iniciar sesión</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <ng-template #RegisterForm>
+      <div class="register-form">
+        <h1>Crear cuenta</h1>
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmitRegister(registerForm.value)">
+          <div class="form-group">
+            <label>Nombre completo</label>
+            <input formControlName="name" type="text" class="form-control" placeholder="Escribe tu nombre completo...">
+          </div>
+          <div class="form-group">
+            <label>Nombre de usuario</label>
+            <input formControlName="username" type="text" class="form-control"
+              placeholder="Escribe un nombre de usuario...">
+          </div>
+          <div class="form-group">
+            <div class="custom-file">
+              <input formControlName="photo" type="file" class="custom-file-input" id="inputGroupFile02">
+              <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Elegir
+                foto de perfil</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Contraseña</label>
+            <input formControlName="password" type="password" class="form-control"
+              placeholder="Escribe tu contraseña...">
+          </div>
+          <div class="form-group">
+            <label>Repite la contraseña</label>
+            <input formControlName="repeatPassword" type="password" class="form-control"
+              placeholder="Escribe de nuevo tu contraseña...">
+          </div>
+          <div class="row">
+            <div class="col">
+              <button type="button" class="btn btn-secondary btn-block" (click)="goToLogin()">Ya tengo una
+                cuenta</button>
+            </div>
+            <div class="col">
+              <button type="submit" class="btn btn-black btn-block">Registrarme</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </ng-template>
+  </div>
+</div>

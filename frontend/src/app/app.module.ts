@@ -7,6 +7,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MainFeedComponent } from './main-feed/main-feed.component';
 import { PostComponent } from './main-feed/post/post.component';
 import { CrearPostComponent } from './main-feed/crear-post/crear-post.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { CrearPostComponent } from './main-feed/crear-post/crear-post.component'
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgbModule
+    NgbModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
