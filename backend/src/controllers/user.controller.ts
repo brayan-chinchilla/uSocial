@@ -2,11 +2,20 @@ import { Request, Response } from "express";
 import { setResponse } from "./set-response";
 import { User } from "../models/user.model";
 import { saveImage } from "./aws/s3.controller";
-import { getUser, addUser } from "./aws/dynamo.controller";
-import { compareFaces } from "./aws/rekognition.controller";
 import { generateToken } from "../routes/auth.jwt";
 import { RegisterUser } from "./aws/cognito.controller";
 import UserModel from "./database/User";
+import bcrypt from "bcrypt";
+
+
+async function hashPassword(password: string) {
+    return await bcrypt.hash(password, 10);
+}
+
+async function comparePasswords(password: string, hashPassword: string) {
+    return await bcrypt.compare(password, hashPassword);
+}
+
 
 class UserController {
     public async loginWithUsernameAndPassword(req: Request, res: Response) {
@@ -18,7 +27,7 @@ class UserController {
             if (!user)
                 return setResponse(res, { statuscode: 404, ok: false, message: `Usuario ${username} no encontrado`, data: {} });
 
-            if (user.password !== password)
+            if (!(await comparePasswords(password, user.password)))
                 return setResponse(res, { statuscode: 400, ok: false, message: 'La contraseña ingresada es incorrecta', data: {} });
 
             const token = generateToken({ username });
@@ -41,7 +50,9 @@ class UserController {
             if (userExists)
                 return setResponse(res, { statuscode: 400, ok: false, message: `Ya existe una cuenta con nombre de usuario ${username}`, data: {} });
 
-            await UserModel.create({ name, username, email, botmode, password });
+            const pwd = await hashPassword(password);
+
+            await UserModel.create({ name, username, email, botmode, password: pwd });
             const token = generateToken({ username });
             return setResponse(res, { statuscode: 200, ok: true, message: 'Cuenta registrada exitosamente', data: { token } });
         } catch (error) {
