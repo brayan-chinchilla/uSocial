@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import { config } from "dotenv";
 const env = config();
+import "./controllers/database";
 import routes from './routes';
 
 class Server {

@@ -3,5 +3,6 @@ export interface User {
     email: string;
     username: string;
     password: string;
+    botmode: boolean;
     photo?: string;
 }

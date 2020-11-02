@@ -6,40 +6,59 @@ import { getUser, addUser } from "./aws/dynamo.controller";
 import { compareFaces } from "./aws/rekognition.controller";
 import { generateToken } from "../routes/auth.jwt";
 import { RegisterUser } from "./aws/cognito.controller";
+import UserModel from "./database/User";
 
 class UserController {
     public async loginWithUsernameAndPassword(req: Request, res: Response) {
-        const { username, password, email }: User = req.body;
-        const user: User = (await getUser(username)).Item as User;
+        const { username, password }: User = req.body;
 
-        if (user) {
-            if (user.password === password) {
-                const token = generateToken({ username });
-                return setResponse(res, { statuscode: 200, ok: true, message: 'Ha iniciado sesion correctamente', data: { token } });
-            } else {
-                return setResponse(res, { statuscode: 400, ok: false, message: 'La contraseña ingresada es incorrecta' });
-            }
+        try {
+            const user = await UserModel.findOne({ username });
+
+            if (!user)
+                return setResponse(res, { statuscode: 404, ok: false, message: `Usuario ${username} no encontrado`, data: {} });
+
+            if (user.password !== password)
+                return setResponse(res, { statuscode: 400, ok: false, message: 'La contraseña ingresada es incorrecta', data: {} });
+
+            const token = generateToken({ username });
+            return setResponse(res, { statuscode: 200, ok: true, message: 'Ha iniciado sesion correctamente', data: { token } });
+        } catch (error) {
+            return setResponse(res, { statuscode: 501, ok: false, message: `Ha ocurrido un error inesperado.`, data: { error } });
         }
-
-        return setResponse(res, { statuscode: 404, ok: false, message: `Usuario ${username} no encontrado`, });
     }
 
     public async register(req: Request, res: Response) {
         const { name, username, email, password }: User = req.body;
+        const botmode = false;
 
         if (!name || !username || !email || !password)
-            return setResponse(res, { statuscode: 400, ok: false, message: `El usuario ${username} ya existe` });
+            return setResponse(res, { statuscode: 400, ok: false, message: `Campos obligatorios: name, username, email, password`, data: {} });
 
-        RegisterUser({ name, username, email, password })
-            .then((value) => {
-                console.log('Then:', value)
-                const token = generateToken({ username });
-                return setResponse(res, { statuscode: 200, ok: true, message: `Se ha registrado exitosamente`, data: { token } });
-            })
-            .catch((error) => {
-                console.error('Catch:', error)
-                return setResponse(res, { statuscode: 400, ok: false, message: 'No se pudo completar el registro', data: { error } });
-            });
+        try {
+            const userExists = await UserModel.findOne({ username });
+
+            if (userExists)
+                return setResponse(res, { statuscode: 400, ok: false, message: `Ya existe una cuenta con nombre de usuario ${username}`, data: {} });
+
+            await UserModel.create({ name, username, email, botmode, password });
+            const token = generateToken({ username });
+            return setResponse(res, { statuscode: 200, ok: true, message: 'Cuenta registrada exitosamente', data: { token } });
+        } catch (error) {
+            return setResponse(res, { statuscode: 501, ok: false, message: `Ha ocurrido un error inesperado.`, data: { error } });
+        }
+
+
+        // RegisterUser({ name, username, email, password, botmode })
+        //     .then((value) => {
+        //         console.log('Then:', value)
+        //         const token = generateToken({ username });
+        //         return setResponse(res, { statuscode: 200, ok: true, message: `Se ha registrado exitosamente`, data: { token } });
+        //     })
+        //     .catch((error) => {
+        //         console.error('Catch:', error)
+        //         return setResponse(res, { statuscode: 400, ok: false, message: 'No se pudo completar el registro', data: { error } });
+        //     });
 
         // if (user)
 
