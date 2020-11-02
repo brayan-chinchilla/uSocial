@@ -11,16 +11,16 @@ class StudentController {
         const student: Student = (await getStudent(username)).Item as Student;
 
         if (student)
-            return setResponse(res, { statusCode: 400, ok: false, message: `El estudiante ${username} ya existe` });
+            return setResponse(res, { statuscode: 400, ok: false, message: `El estudiante ${username} ya existe` });
 
         try {
             const photoUrl = await saveImage('estudiantes', username, photo);
 
             await addStudent({ username, photo: photoUrl });
-            return setResponse(res, { statusCode: 200, ok: true, message: `Se ha agregado al estudiante exitosamente` });
+            return setResponse(res, { statuscode: 200, ok: true, message: `Se ha agregado al estudiante exitosamente` });
         } catch (e) {
             console.error(e);
-            return setResponse(res, { statusCode: 500, ok: false, message: `No se pudo agregar al estudiante` });
+            return setResponse(res, { statuscode: 500, ok: false, message: `No se pudo agregar al estudiante` });
         }
     }
 

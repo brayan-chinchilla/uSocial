@@ -1,13 +1,13 @@
 import express, { Application } from 'express';
 import cors from 'cors';
 import { config } from "dotenv";
+const env = config();
 import routes from './routes';
 
 class Server {
     public app: Application;
     
     constructor() {
-        const env = config();
         console.log('Variables de entorno:', env)
         this.app = express();
         this.config();

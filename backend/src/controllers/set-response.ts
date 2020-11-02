@@ -1,13 +1,13 @@
 import { Response } from "express";
 
 interface ResponseObj {
-    statusCode: number;
+    statuscode: number;
     ok: boolean;
     message: string;
-    token?: string;
+    data?: object;
 }
 
 export function setResponse(res: Response, response: ResponseObj) {
-    res.statusCode = response.statusCode;
-    res.json({...response});
+    res.statusCode = response.statuscode;
+    res.json({ ...response });
 }
