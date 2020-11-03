@@ -9,7 +9,7 @@ class Server {
     public app: Application;
     
     constructor() {
-        console.log('Variables de entorno:', env)
+        // console.log('Variables de entorno:', env)
         this.app = express();
         this.config();
         this.middlewares();
