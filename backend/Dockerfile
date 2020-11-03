@@ -1,11 +1,13 @@
-FROM node:12
+FROM node:12-alpine3.12
 
-WORKDIR /usr/src/app/backend
+WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
 RUN npm install
 
-EXPOSE 3080
+COPY . .
 
-CMD ["npm", "start"]
+RUN npm run build
+
+CMD ["node", "build/index.js"]
