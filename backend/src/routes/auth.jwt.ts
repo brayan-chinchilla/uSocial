@@ -9,13 +9,13 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
     if (token) {
         verify(token, secret, (err, _) => {
             if (err) {
-                return setResponse(res, { statuscode: 401, ok: false, message: 'Token inválido' });
+                return setResponse(res, { statuscode: 401, ok: false, message: 'Token inválido0', data: {} });
             } else {
                 next();
             }
         });
     } else {
-        return setResponse(res, { statuscode: 400, ok: false, message: 'Token no proveído.' });
+        return setResponse(res, { statuscode: 400, ok: false, message: 'Token no proveído.', data: {} });
     }
 };
 
