@@ -1,5 +1,23 @@
 # uSocial
 
+## Levantar los servicios usando docker-compose
+
+Ubicarse en la ruta donde está el archivo *docker-compose.yml* y ejecutar:
+
+`docker-compose up -d`
+
+Donde:
+
+-d, --detach: Corre los servicios en segundo plano
+
+Para detener los servicios ejecutar:
+
+`docker-compose down`
+
+Para más comandos, ejecutar `docker-compose -h` para ver los parametros y comandos disponibles.
+
+## Levantar los sevicios sin docker-compose
+
 ## Servidor
 
 ### Construir imagen de docker
