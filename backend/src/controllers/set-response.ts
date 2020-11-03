@@ -4,7 +4,7 @@ interface ResponseObj {
     statuscode: number;
     ok: boolean;
     message: string;
-    data?: object;
+    data: object;
 }
 
 export function setResponse(res: Response, response: ResponseObj) {

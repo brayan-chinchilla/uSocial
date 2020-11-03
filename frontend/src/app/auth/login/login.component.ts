@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ResponseAPI } from 'src/app/response-api.interface';
 import { AuthService } from '../auth.service';
+import { filter } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
+import { StorageService } from 'src/app/storage.service';
 
 @Component({
   selector: 'app-login',
@@ -10,6 +14,7 @@ import { AuthService } from '../auth.service';
 export class LoginComponent {
 
   showRegister: boolean = false;
+  errorMessage: string = '';
 
   loginForm: FormGroup = this.fb.group({
     username: new FormControl('', Validators.required),
@@ -19,29 +24,44 @@ export class LoginComponent {
   registerForm: FormGroup = this.fb.group({
     name: new FormControl('', Validators.required),
     username: new FormControl('', Validators.required),
+    email: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
     repeatPassword: new FormControl('', Validators.required),
-    photo: new FormControl('', Validators.required),
+    photo: new FormControl(''),
   })
 
-  constructor(private fb: FormBuilder, private authService: AuthService) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private storage: StorageService) { }
 
   goToRegister() {
+    this.errorMessage = '';
+    this.registerForm.reset();
     this.showRegister = true;
   }
 
   goToLogin() {
+    this.errorMessage = '';
+    this.loginForm.reset();
     this.showRegister = false;
   }
 
   onSubmitLogin(value: any) {
-    console.log(value)
-    this.authService.login(value).subscribe(() => { }, () => { })
+    this.errorMessage = '';
+    this.authService.login(value).pipe(
+      filter((response: ResponseAPI) => response.ok && response.statuscode === 200)
+    ).subscribe((response) => {
+      console.log(response);
+      this.storage.saveToken(response.data.token);
+    }, ({ error }: HttpErrorResponse) => { this.errorMessage = error.message; })
   }
 
   onSubmitRegister(value: any) {
-    console.log(value)
-    this.authService.register(value).subscribe(() => { }, () => { })
+    this.errorMessage = '';
+    this.authService.register(value).pipe(
+      filter((response: ResponseAPI) => response.ok && response.statuscode === 200)
+    ).subscribe((response) => {
+      console.log(response)
+      this.storage.saveToken(response.data.token);
+    }, ({ error }: HttpErrorResponse) => { this.errorMessage = error.message; })
   }
 
 }
