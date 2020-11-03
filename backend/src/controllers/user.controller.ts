@@ -18,6 +18,21 @@ async function comparePasswords(password: string, hashPassword: string) {
 
 
 class UserController {
+    public async getOneUser(req: Request, res: Response) {
+        const { username } = req.params;
+
+        try {
+            const user = await UserModel.findOne({ username });
+
+            if (!user) return setResponse(res, { statuscode: 404, ok: false, message: `Usuario ${username} no encontrado`, data: {} });
+
+            user.password = '';
+            return setResponse(res, { statuscode: 200, ok: true, message: `Usuario ${user.name}`, data: { user } });
+        } catch (error) {
+            return setResponse(res, { statuscode: 501, ok: false, message: `No se pudo encontrar el usuario. Id erroneo`, data: { error } });
+        }
+    }
+
     public async loginWithUsernameAndPassword(req: Request, res: Response) {
         const { username, password }: User = req.body;
 
@@ -31,7 +46,10 @@ class UserController {
                 return setResponse(res, { statuscode: 400, ok: false, message: 'La contraseña ingresada es incorrecta', data: {} });
 
             const token = generateToken({ username });
-            return setResponse(res, { statuscode: 200, ok: true, message: 'Ha iniciado sesion correctamente', data: { token } });
+            return setResponse(res, {
+                statuscode: 200, ok: true, message: 'Ha iniciado sesion correctamente',
+                data: { token, username }
+            });
         } catch (error) {
             return setResponse(res, { statuscode: 501, ok: false, message: `Ha ocurrido un error inesperado.`, data: { error } });
         }
@@ -54,7 +72,7 @@ class UserController {
 
             await UserModel.create({ name, username, email, botmode, password: pwd });
             const token = generateToken({ username });
-            return setResponse(res, { statuscode: 200, ok: true, message: 'Cuenta registrada exitosamente', data: { token } });
+            return setResponse(res, { statuscode: 200, ok: true, message: 'Cuenta registrada exitosamente', data: { token, username } });
         } catch (error) {
             return setResponse(res, { statuscode: 501, ok: false, message: `Ha ocurrido un error inesperado.`, data: { error } });
         }

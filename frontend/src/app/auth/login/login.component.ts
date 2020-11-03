@@ -55,6 +55,7 @@ export class LoginComponent {
     ).subscribe((response) => {
       console.log(response);
       this.storage.saveToken(response.data.token);
+      this.storage.saveUsername(response.data.username);
       this.router.navigate([this.backTo || '/profile']);
     }, ({ error }: HttpErrorResponse) => { this.errorMessage = error.message; })
   }
@@ -66,6 +67,7 @@ export class LoginComponent {
     ).subscribe((response) => {
       console.log(response)
       this.storage.saveToken(response.data.token);
+      this.storage.saveUsername(response.data.username);
       this.router.navigate(['/profile']);
     }, ({ error }: HttpErrorResponse) => { this.errorMessage = error.message; })
   }

@@ -6,7 +6,8 @@ import { Injectable } from '@angular/core';
 export class StorageService {
 
   private keys = {
-    token: 'token'
+    token: 'token',
+    username: 'username'
   }
 
   constructor() { }
@@ -21,6 +22,18 @@ export class StorageService {
 
   deleteToken() {
     localStorage.removeItem(this.keys.token);
+  }
+
+  saveUsername(username: string) {
+    localStorage.setItem(this.keys.username, username);
+  }
+
+  getUsername() {
+    return localStorage.getItem(this.keys.username);
+  }
+
+  deleteUsername() {
+    localStorage.removeItem(this.keys.username);
   }
 
 }
