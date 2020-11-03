@@ -1,11 +1,18 @@
-FROM node:12
+FROM node:12-alpine3.12 As builder
 
-WORKDIR /usr/src/app/frontend
+WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
-RUN npm install -g @angular/cli @angular-devkit/build-angular && npm install
+RUN npm install
 
-EXPOSE 4201
+COPY . .
 
-CMD ["npm", "start"]
+RUN npm run build -- --prod
+
+FROM nginx:1.15.8-alpine
+
+COPY --from=builder /usr/src/app/dist/usocial/ /usr/share/nginx/html
+COPY ./nginx-custom.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
