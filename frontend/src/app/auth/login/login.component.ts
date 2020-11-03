@@ -5,6 +5,7 @@ import { AuthService } from '../auth.service';
 import { filter } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { StorageService } from 'src/app/storage.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +16,7 @@ export class LoginComponent {
 
   showRegister: boolean = false;
   errorMessage: string = '';
+  backTo: string | undefined = undefined;
 
   loginForm: FormGroup = this.fb.group({
     username: new FormControl('', Validators.required),
@@ -30,7 +32,9 @@ export class LoginComponent {
     photo: new FormControl(''),
   })
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private storage: StorageService) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private storage: StorageService, private router: Router, private activeRoute: ActivatedRoute) {
+    this.backTo = this.activeRoute.snapshot.queryParams['backTo'];
+  }
 
   goToRegister() {
     this.errorMessage = '';
@@ -51,6 +55,7 @@ export class LoginComponent {
     ).subscribe((response) => {
       console.log(response);
       this.storage.saveToken(response.data.token);
+      this.router.navigate([this.backTo || '/profile']);
     }, ({ error }: HttpErrorResponse) => { this.errorMessage = error.message; })
   }
 
@@ -61,6 +66,7 @@ export class LoginComponent {
     ).subscribe((response) => {
       console.log(response)
       this.storage.saveToken(response.data.token);
+      this.router.navigate(['/profile']);
     }, ({ error }: HttpErrorResponse) => { this.errorMessage = error.message; })
   }
 
