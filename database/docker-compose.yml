@@ -1,0 +1,10 @@
+version: "3"
+services:
+  database:
+    image: "mongo"
+    container_name: usocial-database
+    restart: always
+    ports:
+      - "27017-27019:27017-27019"
+    env_file:
+      - ./.env
