@@ -6,7 +6,7 @@ Parameters:
   VPCName:
     Description: Nombre de la VPC a crear
     Type: String
-    Default: "VPC-uSocial"
+    Default: "VPC-G5"
 
 Mappings:
   SubnetConfig:
