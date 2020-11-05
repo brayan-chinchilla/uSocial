@@ -14,12 +14,11 @@
           <small><span>@{{profileForm.controls['username'].value}}</span></small>
           <br>
           <small><span>{{profileForm.controls['email'].value}}</span></small>
+          <br>
+          <a type="button" (click)="photoInput.click()" class="link"> <small>Cambiar foto</small></a>
         </div>
       </div>
-      <button type="button" (click)="photoInput.click()" class="btn btn-link"> <small>
-          Cambiar foto
-        </small>
-      </button>
+
       <!--/ media -->
     </div>
     <!--/ cardbox-heading -->
@@ -70,8 +69,17 @@
             </div>
           </div>
           <div class="row">
-            <div class="col">
-              <p class="text-danger">{{errorMessage}}</p>
+            <div class="col mt-3" *ngIf="errorMessage">
+              <div class="alert alert-danger" role="alert">
+                {{errorMessage}}
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col mt-3" *ngIf="successMessage">
+              <div class="alert alert-success" role="alert">
+                {{successMessage}}
+              </div>
             </div>
           </div>
         </form>

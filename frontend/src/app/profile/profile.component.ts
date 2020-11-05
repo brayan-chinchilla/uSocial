@@ -13,6 +13,7 @@ import { ProfileService } from './profile.service';
 export class ProfileComponent implements OnInit {
 
   errorMessage: string = '';
+  successMessage: string = '';
   profileImage: string | ArrayBuffer = '';
 
   profileForm: FormGroup = this.fb.group({
@@ -36,16 +37,17 @@ export class ProfileComponent implements OnInit {
       this.profileForm.controls['email'].setValue(user.email);
       this.profileForm.controls['botmode'].setValue(user.botmode);
       this.profileImage = user.photo;
-    }, ({ error }: HttpErrorResponse) => { console.log(error); this.errorMessage = error.message; })
+    }, ({ error }: HttpErrorResponse) => { this.errorMessage = error.message; })
   }
 
   onUpdateProfile(value: any) {
     this.errorMessage = '';
+    this.successMessage = '';
     this.profileService.updateUserProfile(value).pipe(
       filter((response: ResponseAPI) => response.ok && response.statuscode === 200)
     ).subscribe((response) => {
-      console.log(response.data)
-    }, ({ error }: HttpErrorResponse) => { console.log(error); this.errorMessage = error.message; })
+      this.successMessage = response.message;
+    }, ({ error }: HttpErrorResponse) => { this.errorMessage = error.message; })
   }
 
   handleUpload(event) {

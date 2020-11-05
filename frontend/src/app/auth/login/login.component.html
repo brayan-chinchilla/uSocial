@@ -23,7 +23,7 @@
             <span class="text-danger">* Campos obligatorios</span>
           </div>
         </div>
-        <div class="row">
+        <div class="row mt-2">
           <div class="col">
             <button type="button" class="btn btn-secondary btn-block" (click)="goToRegister()">Crear una cuenta</button>
           </div>
@@ -32,8 +32,10 @@
           </div>
         </div>
         <div class="row">
-          <div class="col">
-            <p class="text-danger">{{errorMessage}}</p>
+          <div class="col mt-3" *ngIf="errorMessage">
+            <div class="alert alert-danger" role="alert">
+              {{errorMessage}}
+            </div>
           </div>
         </div>
       </form>
@@ -59,8 +61,10 @@
           </div>
           <div class="form-group">
             <div class="mb-2">
-              <img [src]="registerForm.controls['photo'].value || '/assets/no-photo.png'" width="100px" height="100px" style="object-fit: cover;" />
-              <button type="button" (click)="photoInput.click()" class="btn btn-link ml-2">Elegir foto de perfil</button>
+              <img [src]="registerForm.controls['photo'].value || '/assets/no-photo.png'" width="100px" height="100px"
+                style="object-fit: cover;" />
+              <button type="button" (click)="photoInput.click()" class="btn btn-link ml-2">Elegir foto de
+                perfil</button>
             </div>
             <input #photoInput hidden (change)="handleUpload($event)" type="file">
           </div>
@@ -79,7 +83,7 @@
               <span class="text-danger">* Campos obligatorios</span>
             </div>
           </div>
-          <div class="row">
+          <div class="row mt-2">
             <div class="col">
               <button type="button" class="btn btn-secondary btn-block" (click)="goToLogin()">Ya tengo una
                 cuenta</button>
@@ -90,8 +94,10 @@
             </div>
           </div>
           <div class="row">
-            <div class="col">
-              <p class="text-danger">{{errorMessage}}</p>
+            <div class="col mt-3" *ngIf="errorMessage">
+              <div class="alert alert-danger" role="alert">
+                {{errorMessage}}
+              </div>
             </div>
           </div>
         </form>
