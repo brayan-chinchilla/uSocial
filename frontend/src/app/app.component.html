@@ -1,1 +1,4 @@
-<router-outlet></router-outlet>
+<app-navbar *ngIf="authService.isLogged()"></app-navbar>
+<div style="margin-top: 80px;">
+  <router-outlet></router-outlet>
+</div>

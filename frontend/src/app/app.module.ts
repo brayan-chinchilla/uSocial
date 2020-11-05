@@ -10,6 +10,7 @@ import { CrearPostComponent } from './main-feed/crear-post/crear-post.component'
 import { HttpClientModule } from '@angular/common/http';
 import { ProfileComponent } from './profile/profile.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MainFeedComponent,
     PostComponent,
     CrearPostComponent,
-    ProfileComponent
+    ProfileComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,

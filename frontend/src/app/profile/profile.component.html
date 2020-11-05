@@ -1,4 +1,4 @@
-<div class="col-lg-6 offset-lg-3 mt-5">
+<div class="col-lg-6 offset-lg-3">
 
   <div class="cardbox shadow-lg bg-white">
 
@@ -62,21 +62,21 @@
               <span class="text-danger">* Campos obligatorios</span>
             </div>
           </div>
-          <div class="row mt-2">
+          <div class="row mt-2 mb-3">
             <div class="col">
               <button [disabled]="profileForm.invalid" type="submit" class="btn btn-dark btn-block">Actualizar
                 perfil</button>
             </div>
           </div>
           <div class="row">
-            <div class="col mt-3" *ngIf="errorMessage">
+            <div class="col" *ngIf="errorMessage">
               <div class="alert alert-danger" role="alert">
                 {{errorMessage}}
               </div>
             </div>
           </div>
           <div class="row">
-            <div class="col mt-3" *ngIf="successMessage">
+            <div class="col" *ngIf="successMessage">
               <div class="alert alert-success" role="alert">
                 {{successMessage}}
               </div>

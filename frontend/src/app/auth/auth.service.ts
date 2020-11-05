@@ -24,4 +24,9 @@ export class AuthService {
     const token = this.storage.getToken();
     return !!token;
   }
+
+  logout() {
+    this.storage.deleteToken();
+    this.storage.deleteUsername();
+  }
 }
