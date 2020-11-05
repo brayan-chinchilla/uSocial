@@ -53,9 +53,8 @@ export class LoginComponent {
     this.authService.login(value).pipe(
       filter((response: ResponseAPI) => response.ok && response.statuscode === 200)
     ).subscribe((response) => {
-      console.log(response);
       this.storage.saveToken(response.data.token);
-      this.storage.saveUsername(response.data.username);
+      this.storage.saveUsername(response.data.user._id);
       this.router.navigate([this.backTo || '/profile']);
     }, ({ error }: HttpErrorResponse) => { this.errorMessage = error.message; })
   }
@@ -65,9 +64,8 @@ export class LoginComponent {
     this.authService.register(value).pipe(
       filter((response: ResponseAPI) => response.ok && response.statuscode === 200)
     ).subscribe((response) => {
-      console.log(response)
       this.storage.saveToken(response.data.token);
-      this.storage.saveUsername(response.data.username);
+      this.storage.saveUsername(response.data.user._id);
       this.router.navigate(['/profile']);
     }, ({ error }: HttpErrorResponse) => { this.errorMessage = error.message; })
   }

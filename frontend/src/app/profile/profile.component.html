@@ -6,14 +6,20 @@
 
       <div class="media m-0">
         <div class="d-flex mr-3">
-          <img class="img-fluid rounded-circle"
-            src="http://www.themashabrand.com/templates/bootsnipp/post/assets/img/users/4.jpg" alt="User">
+          <img class="img-fluid rounded-circle" [src]="profileImage" alt="User"
+            style="object-fit: cover;">
         </div>
         <div class="media-body">
           <p class="m-0">{{profileForm.controls['name'].value}}</p>
           <small><span>@{{profileForm.controls['username'].value}}</span></small>
+          <br>
+          <small><span>{{profileForm.controls['email'].value}}</span></small>
         </div>
       </div>
+      <button type="button" (click)="photoInput.click()" class="btn btn-link"> <small>
+          Cambiar foto
+        </small>
+      </button>
       <!--/ media -->
     </div>
     <!--/ cardbox-heading -->
@@ -29,21 +35,20 @@
           </div>
           <div class="form-group">
             <label>Nombre de usuario <span class="text-danger">*</span></label>
-            <input formControlName="username" type="text" class="form-control"
-              placeholder="Escribe un nombre de usuario...">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">@</span>
+              </div>
+              <input formControlName="username" type="text" class="form-control"
+                placeholder="Escribe un nombre de usuario..." aria-describedby="basic-addon1">
+            </div>
           </div>
           <div class="form-group">
             <label>Correo electrónico <span class="text-danger">*</span></label>
             <input formControlName="email" type="email" class="form-control"
               placeholder="Escribe un correo electrónico...">
           </div>
-          <div class="form-group">
-            <div class="custom-file">
-              <input formControlName="photo" type="file" class="custom-file-input" id="inputGroupFile02">
-              <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Elegir
-                foto de perfil</label>
-            </div>
-          </div>
+          <input (change)="handleUpload($event)" #photoInput hidden type="file">
           <div class="form-group form-check">
             <input formControlName="botmode" type="checkbox" class="form-check-input" id="botmode">
             <label class="form-check-label" for="botmode">Modo Bot</label>

@@ -18,4 +18,10 @@ export class ProfileService {
       return this.http.get(`${this.apiUrl}/users/${userid}`);
   }
 
+  updateUserProfile(user: any) {
+    const userid = this.storage.getUsername();
+    if (userid)
+      return this.http.put(`${this.apiUrl}/users/${userid}`, user);
+  }
+
 }
