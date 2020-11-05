@@ -14,7 +14,7 @@ class StudentController {
             return setResponse(res, { statuscode: 400, ok: false, message: `El estudiante ${username} ya existe`, data: {} });
 
         try {
-            const photoUrl = await saveImage('estudiantes', username, photo);
+            const photoUrl = await saveImage('publicaciones', username, photo);
 
             await addStudent({ username, photo: photoUrl });
             return setResponse(res, { statuscode: 200, ok: true, message: `Se ha agregado al estudiante exitosamente`, data: {} });

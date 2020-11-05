@@ -1,6 +1,8 @@
 import { S3 } from "aws-sdk";
 
-export const bucketName = 'pro1-images-grupo5';
+type S3FolderName = 'usuarios' | 'publicaciones';
+
+export const bucketName = 'pro2-images-grupo5';
 
 export async function saveImage(folderName: S3FolderName, fileName: string, base64: string) {
     const data = base64.split(',');
@@ -19,4 +21,9 @@ export async function saveImage(folderName: S3FolderName, fileName: string, base
     return `https://${bucketName}.s3.amazonaws.com/${folderName}/${fileName}`;
 }
 
-type S3FolderName = 'usuarios' | 'estudiantes';
+export async function deleteImage(folderName: S3FolderName, fileName: string) {
+    await new S3({}).deleteObject({
+        Bucket: bucketName + '/' + folderName,
+        Key: fileName
+    }).promise();
+}
