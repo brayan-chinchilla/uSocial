@@ -58,11 +58,11 @@
               placeholder="Escribe un correo electrónico...">
           </div>
           <div class="form-group">
-            <div class="custom-file">
-              <input formControlName="photo" type="file" class="custom-file-input" id="inputGroupFile02">
-              <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Elegir
-                foto de perfil</label>
+            <div class="mb-2">
+              <img [src]="registerForm.controls['photo'].value || '/assets/no-photo.png'" width="100px" height="100px" style="object-fit: cover;" />
+              <button type="button" (click)="photoInput.click()" class="btn btn-link ml-2">Elegir foto de perfil</button>
             </div>
+            <input #photoInput hidden (change)="handleUpload($event)" type="file">
           </div>
           <div class="form-group">
             <label>Contraseña <span class="text-danger">*</span></label>

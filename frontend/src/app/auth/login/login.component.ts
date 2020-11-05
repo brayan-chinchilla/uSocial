@@ -29,7 +29,7 @@ export class LoginComponent {
     email: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
     repeatPassword: new FormControl('', Validators.required),
-    photo: new FormControl(''),
+    photo: new FormControl(null),
   })
 
   constructor(private fb: FormBuilder, private authService: AuthService, private storage: StorageService, private router: Router, private activeRoute: ActivatedRoute) {
@@ -61,6 +61,10 @@ export class LoginComponent {
 
   onSubmitRegister(value: any) {
     this.errorMessage = '';
+    if (value.repeatPassword !== value.password) {
+      this.errorMessage = 'Las contraseñas no coinciden';
+      return;
+    }
     this.authService.register(value).pipe(
       filter((response: ResponseAPI) => response.ok && response.statuscode === 200)
     ).subscribe((response) => {
@@ -68,6 +72,17 @@ export class LoginComponent {
       this.storage.saveUsername(response.data.user._id);
       this.router.navigate(['/profile']);
     }, ({ error }: HttpErrorResponse) => { this.errorMessage = error.message; })
+  }
+
+  handleUpload(event) {
+    if (event.target.files[0]) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        this.registerForm.controls['photo'].setValue(reader.result);
+      };
+    }
   }
 
 }

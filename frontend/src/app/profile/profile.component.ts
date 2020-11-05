@@ -1,10 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { ResponseAPI } from '../response-api.interface';
-import { StorageService } from '../storage.service';
 import { ProfileService } from './profile.service';
 
 @Component({
@@ -42,7 +40,6 @@ export class ProfileComponent implements OnInit {
   }
 
   onUpdateProfile(value: any) {
-    console.log(value)
     this.errorMessage = '';
     this.profileService.updateUserProfile(value).pipe(
       filter((response: ResponseAPI) => response.ok && response.statuscode === 200)

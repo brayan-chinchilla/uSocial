@@ -6,6 +6,7 @@ import { generateToken } from "../routes/auth.jwt";
 import { RegisterUser } from "./aws/cognito.controller";
 import UserModel from "./database/User";
 import bcrypt from "bcrypt";
+import { Types } from "mongoose";
 
 
 async function hashPassword(password: string) {
@@ -37,10 +38,14 @@ class UserController {
             if (!(await comparePasswords(password, dbuser.password)))
                 return setResponse(res, { statuscode: 400, ok: false, message: 'La contraseña ingresada es incorrecta', data: {} });
 
-            let imageUrl = '';
-            if (photo) imageUrl = await saveImage('usuarios', userid, photo);
+            if (photo) {
+                const imageUrl = await saveImage('usuarios', userid, photo);
+                await UserModel.updateOne({ _id: userid }, { botmode, email, name, username, photo: imageUrl });
+            } else {
+                await UserModel.updateOne({ _id: userid }, { botmode, email, name, username });
+            }
 
-            await UserModel.updateOne({ _id: userid }, { botmode, email, name, username, photo: imageUrl });
+
 
             dbuser.password = '';
             return setResponse(res, { statuscode: 200, ok: true, message: `Usuario ${dbuser.username} actualizado`, data: { user: dbuser } });
@@ -88,7 +93,7 @@ class UserController {
     }
 
     public async register(req: Request, res: Response) {
-        const { name, username, email, password }: User = req.body;
+        const { name, username, email, password, photo }: User = req.body;
         const botmode = false;
 
         if (!name || !username || !email || !password)
@@ -102,7 +107,12 @@ class UserController {
 
             const pwd = await hashPassword(password);
 
-            const newUser = await UserModel.create({ name, username, email, botmode, password: pwd });
+            const userid = Types.ObjectId();
+            let imageUrl = '';
+            if (photo) imageUrl = await saveImage('usuarios', userid.toHexString(), photo);
+
+            const newUser = await UserModel.create({ _id: userid, name, username, email, botmode, password: pwd, photo: imageUrl });
+
             const token = generateToken({ username });
 
             newUser.password = '';
