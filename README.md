@@ -43,6 +43,7 @@ JWT_SECRET=<secret>
 PORT=<port>
 COGNITO_CLIENT_ID=<id>
 MONGO_URI=<uri>
+CLIENT_URL=<client_url>
 ```
 También pueden especificarse cada una en el comando de docker run utilizando el flag `-e`. Ejemplo: `-e MONGO_URI=uri`
 

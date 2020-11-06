@@ -7,4 +7,5 @@ JWT_SECRET=<your_secret>
 PORT=<port>
 COGNITO_CLIENT_ID=<client_id>
 MONGO_URI=<uri>
+CLIENT_URL=<client_url>
 ```

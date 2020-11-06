@@ -1,43 +1,31 @@
-import express, { Application } from 'express';
+import { createServer } from "http";
+import express from 'express';
 import cors from 'cors';
 import { config } from "dotenv";
-const env = config();
+config();
 import "./controllers/database";
 import routes from './routes';
+import { createSocketServer } from "./socket";
 
-class Server {
-    public app: Application;
-    
-    constructor() {
-        // console.log('Variables de entorno:', env)
-        this.app = express();
-        this.config();
-        this.middlewares();
-        this.routes();
-    }
+// Create servers
+const app = express();
+const server = createServer(app);
 
-    private config(): void {
-        this.app.set('port', process.env.PORT || 4000);
-        this.app.set('json spaces', 2);
-    }
+// Socket io
+createSocketServer(server);
 
-    private middlewares(): void {
-        this.app.use(cors());
-        this.app.use(express.json({limit: '50mb'}));
-        this.app.use(express.urlencoded({ extended: false }));
-        // this.app.use(express.static(path.join(__dirname, 'public')));
-    }
+// Config
+app.set('port', process.env.PORT || 4000);
+app.set('json spaces', 2);
 
-    private routes(): void {
-        this.app.use('/api', routes);
-    }
+// Middlewares
+app.use(cors());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: false }));
+// app.use(express.static(path.join(__dirname, 'public')));
 
-    public start(): void {
-        this.app.listen(this.app.get('port'), () => {
-            console.log('Servidor levantado en el puerto', this.app.get('port'))
-        });
-    }
-}
+// Routes
+app.use('/api', routes);
 
-const server = new Server();
-server.start();
+// Listen
+server.listen(app.get('port'), () => { console.log('Servidor levantado en el puerto', app.get('port')) });
