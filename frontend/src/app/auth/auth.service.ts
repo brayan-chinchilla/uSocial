@@ -29,4 +29,8 @@ export class AuthService {
     this.storage.deleteToken();
     this.storage.deleteUsername();
   }
+
+  getLoggedUserId() {
+    return this.storage.getUsername();
+  }
 }

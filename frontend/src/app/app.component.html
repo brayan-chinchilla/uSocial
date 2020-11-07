@@ -2,3 +2,5 @@
 <div style="margin-top: 80px;">
   <router-outlet></router-outlet>
 </div>
+
+<ng-chat *ngIf="userId" [adapter]="adapter" [userId]="userId"></ng-chat>
