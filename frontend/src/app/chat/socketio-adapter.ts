@@ -5,12 +5,30 @@ import { HttpClient } from '@angular/common/http';
 import { Socket } from 'socket.io-client/build/socket';
 import { environment } from 'src/environments/environment';
 
+interface BotMetadata {
+  botStep: string;
+  casos: {
+    pais: string;
+    fecha: string;
+    tipo: string;
+  },
+  grafica: {
+    pais: string;
+    rango: string;
+  }
+}
+
 export class SocketIOAdapter extends ChatAdapter {
   private socket: Socket;
   private http: HttpClient;
   private userId: string;
   private loggedUserId: string;
   private apiUrl = environment.apiUrl;
+  private metadata: BotMetadata = {
+    botStep: '',
+    casos: { fecha: '', pais: '', tipo: '' },
+    grafica: { pais: '', rango: '' }
+  };
 
   constructor(userId: string, loggedUserId: string, socket: Socket, http: HttpClient) {
     super();
@@ -49,7 +67,9 @@ export class SocketIOAdapter extends ChatAdapter {
   }
 
   sendMessage(message: Message): void {
-    this.socket.emit("sendMessage", message);
+    this.socket.emit("sendMessage", {
+      message, metadata: this.metadata
+    });
   }
 
   public InitializeSocketListerners(): void {
@@ -57,6 +77,13 @@ export class SocketIOAdapter extends ChatAdapter {
       // Handle the received message to ng-chat
 
       this.onMessageReceived(messageWrapper.user, messageWrapper.message);
+    });
+
+    this.socket.on("botResponse", (messageWrapper) => {
+      // Handle the received message to ng-chat
+      console.log(messageWrapper.response);
+      this.metadata = messageWrapper.response.metadata;
+      this.onMessageReceived(messageWrapper.user, messageWrapper.response.message);
     });
 
     this.socket.on("friendsListChanged", (usersCollection: Array<ParticipantResponse>) => {

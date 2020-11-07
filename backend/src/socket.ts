@@ -2,8 +2,18 @@ import { Server as SockerServer } from "socket.io";
 import { Server } from "http";
 import UserModel from "./controllers/database/User";
 import MessageModel from "./controllers/database/Message";
+import { BotResponse, manageBotResponse } from "./controllers/covid-bot";
 
-function createSocketServer(server: Server, usersCollection: any[]) {
+export interface Participant {
+    id: string,
+    displayName: string,
+    userid: string,
+    status: number,
+    avatar: string,
+    botmode: boolean
+}
+
+function createSocketServer(server: Server, usersCollection: { participant: Participant }[]) {
     const io = new SockerServer({}).listen(server, {
         cors: {
             origin: process.env.CLIENT_URL
@@ -25,7 +35,8 @@ function createSocketServer(server: Server, usersCollection: any[]) {
                     displayName: user.name,
                     userid,
                     status: 0, // ng-chat UserStatus.Online,
-                    avatar: user.photo
+                    avatar: user.photo || '',
+                    botmode: user.botmode
                 }
             });
 
@@ -47,24 +58,35 @@ function createSocketServer(server: Server, usersCollection: any[]) {
             });
         });
 
-        socket.on("sendMessage", async function (message: any) {
+        socket.on("sendMessage", async function (data: BotResponse) {
+            const message = data.message;
             console.log("Message received:");
             console.log(message);
 
-            const fromPart = usersCollection.find(x => x.participant.id == message.fromId).participant;
-            const toPart = usersCollection.find(x => x.participant.id == message.toId).participant;
+            const fromPart = usersCollection.find(x => x.participant.id == message.fromId)?.participant;
+            const toPart = usersCollection.find(x => x.participant.id == message.toId)?.participant;
 
-            await MessageModel.create({
-                fromId: fromPart.userid,
-                toId: toPart.userid,
-                message: message.message,
-                dateSent: message.dateSent
-            })
+            if (!fromPart || !toPart) return;
 
-            io.to(message.toId).emit("messageReceived", {
-                user: fromPart,
-                message: message
-            });
+            // await MessageModel.create({
+            //     fromId: fromPart.userid,
+            //     toId: toPart.userid,
+            //     message: message.message,
+            //     dateSent: message.dateSent
+            // })
+
+            if (toPart.botmode) {
+                const response = manageBotResponse(data);
+                io.to(message.fromId).emit("botResponse", {
+                    user: toPart,
+                    response
+                })
+            } else {
+                io.to(message.toId).emit("messageReceived", {
+                    user: fromPart,
+                    message: message
+                });
+            }
 
             console.log("Message dispatched.");
         });

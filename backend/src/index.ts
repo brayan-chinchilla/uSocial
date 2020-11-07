@@ -5,7 +5,7 @@ import { config } from "dotenv";
 config();
 import "./controllers/database";
 import routes from './routes';
-import { createSocketServer } from "./socket";
+import { createSocketServer, Participant } from "./socket";
 import MessageModel from "./controllers/database/Message";
 
 // Create servers
@@ -22,7 +22,9 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false }));
 // app.use(express.static(path.join(__dirname, 'public')));
 
-var usersCollection: any[] = [];
+const usersCollection: {
+    participant: Participant
+}[] = [];
 
 // Socket io
 createSocketServer(server, usersCollection);
@@ -40,7 +42,10 @@ app.post('/api/chat/listFriends', (req, res) => {
 });
 
 app.post('/api/chat/messageHistory', async (req, res) => {
-    const fromId = usersCollection.find(x => x.participant.id == req.body.fromId).participant.userid;
+    const fromId = usersCollection.find(x => x.participant.id == req.body.fromId)?.participant.userid;
+
+    if (!fromId) return res.json([]);
+
     const messages = await MessageModel.find({
         $or: [{
             fromId,
@@ -49,7 +54,7 @@ app.post('/api/chat/messageHistory', async (req, res) => {
             fromId: req.body.toId,
             toId: fromId
         }]
-    }).sort({dateSent: 1});
+    }).sort({ dateSent: 1 });
     res.json(messages)
 });
 
