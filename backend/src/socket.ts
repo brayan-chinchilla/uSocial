@@ -68,20 +68,20 @@ function createSocketServer(server: Server, usersCollection: { participant: Part
 
             if (!fromPart || !toPart) return;
 
-            // await MessageModel.create({
-            //     fromId: fromPart.userid,
-            //     toId: toPart.userid,
-            //     message: message.message,
-            //     dateSent: message.dateSent
-            // })
-
             if (toPart.botmode) {
-                const response = manageBotResponse(data);
+                const response = await manageBotResponse(data);
                 io.to(message.fromId).emit("botResponse", {
                     user: toPart,
                     response
                 })
             } else {
+                await MessageModel.create({
+                    fromId: fromPart.userid,
+                    toId: toPart.userid,
+                    message: message.message,
+                    dateSent: message.dateSent
+                })
+                
                 io.to(message.toId).emit("messageReceived", {
                     user: fromPart,
                     message: message

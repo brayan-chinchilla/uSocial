@@ -55,7 +55,7 @@ export class SocketIOAdapter extends ChatAdapter {
   }
 
   getMessageHistory(userId: any): Observable<Message[]> {
-    console.log('History... ' + userId);
+    // console.log('History... ' + userId);
     return this.http
       .post(`${this.apiUrl}/chat/messageHistory`, { fromId: userId, toId: this.loggedUserId })
       .pipe(
@@ -81,7 +81,7 @@ export class SocketIOAdapter extends ChatAdapter {
 
     this.socket.on("botResponse", (messageWrapper) => {
       // Handle the received message to ng-chat
-      console.log(messageWrapper.response);
+      // console.log(messageWrapper.response);
       this.metadata = messageWrapper.response.metadata;
       this.onMessageReceived(messageWrapper.user, messageWrapper.response.message);
     });
