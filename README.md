@@ -61,3 +61,38 @@ Donde:
 
 ### Correr pagina web
 `docker run -p 80:80 usocial-front`
+
+# Arquitectura AWS
+
+![Arquitectura AWS](arquitectura-aws.png)
+
+# Virtual Private Cloud
+
+En la carpeta `aws` se encuentra el archivo de cloud-formation para crear una VPC con una subred privada y una pública.
+
+En la subred pública se aloja el cliente y el servidor
+
+En la subred privada se aloja la base de datos para que no pueda ser accedida desde internet.
+
+# Security Groups
+
+El security group de la base de datos tiene habilitado los puertos `27017-27019`
+
+El security group del cliente y servidor tiene habilitado los puertos `80, 4000` donde corre el cliente y el servidor respectivamente.
+
+# IAM
+
+Se utilizaron 2 usuarios IAM
+
+- administrador_201709054
+- brayan_chinchilla
+
+# Credenciales de AWS
+
+Para que aws-cli que el backend utiliza para conectarse a los servicios de AWS funcione, se debe crear un archivo llamado `credentials` en `~/.aws/credentials` que contenga lo siguiente
+
+```
+[default]
+aws_access_key_id = <access_key>
+aws_secret_access_key = <secret_access_key>
+```
