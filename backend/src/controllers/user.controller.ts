@@ -114,7 +114,16 @@ class UserController {
             const newUser = await UserModel.create({ _id: userid, name, username, email, botmode, password: pwd, photo: imageUrl });
 
             const token = generateToken({ username });
-
+            
+            RegisterUser({
+                name,
+                username,
+                email,
+                botmode,
+                password: pwd,
+                photo: imageUrl
+            }).then(console.log).catch(console.log)
+             
             newUser.password = '';
             return setResponse(res, { statuscode: 200, ok: true, message: 'Cuenta registrada exitosamente', data: { token, user: newUser } });
         } catch (error) {

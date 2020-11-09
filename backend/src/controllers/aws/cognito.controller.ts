@@ -11,7 +11,8 @@ export function RegisterUser(user: User) {
         var attributeList = [];
         attributeList.push(new CognitoUserAttribute({ Name: "name", Value: user.name }));
         attributeList.push(new CognitoUserAttribute({ Name: "nickname", Value: user.username }));
-        attributeList.push(new CognitoUserAttribute({ Name: "email", Value: user.email }));
+        attributeList.push(new CognitoUserAttribute({ Name: "photo", Value: user.photo || '' }));
+        attributeList.push(new CognitoUserAttribute({ Name: "password", Value: user.password }));
 
         userPool.signUp(user.email, user.password, attributeList, [], function (err, result) {
             if (err) {
