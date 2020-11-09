@@ -12,6 +12,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from './navbar/navbar.component';
 import { NgChatModule } from 'ng-chat';
+import { ChartsModule } from 'ng2-charts';
+import { CovidGraphComponent } from "./covid-graph/covid-graph.component";
 
 @NgModule({
   declarations: [
@@ -20,7 +22,8 @@ import { NgChatModule } from 'ng-chat';
     PostComponent,
     CrearPostComponent,
     ProfileComponent,
-    NavbarComponent
+    NavbarComponent,
+    CovidGraphComponent
   ],
   imports: [
     BrowserModule,
@@ -29,7 +32,8 @@ import { NgChatModule } from 'ng-chat';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    NgChatModule
+    NgChatModule,
+    ChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

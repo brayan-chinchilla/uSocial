@@ -211,7 +211,7 @@ async function handleRangoFecha(data: BotResponse): Promise<BotResponse> {
         message: {
             fromId: message.toId,
             toId: message.fromId,
-            message: "Ok, aqui tienes la información solicitada. ",
+            message: `Puedes ver la gráfica aquí: ${process.env.CLIENT_URL}/covid19`,
             dateSent: new Date(Date.now())
         },
         metadata: {

@@ -84,6 +84,7 @@ export class SocketIOAdapter extends ChatAdapter {
       // Handle the received message to ng-chat
       // console.log(messageWrapper.response);
       this.metadata = messageWrapper.response.metadata;
+      localStorage.setItem('covidgraph', JSON.stringify(this.metadata.grafica));
       this.onMessageReceived(messageWrapper.user, messageWrapper.response.message);
     });
 

@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { CovidGraphGuard } from './covid-graph.guard';
+import { CovidGraphComponent } from './covid-graph/covid-graph.component';
 import { MainFeedComponent } from './main-feed/main-feed.component';
 import { MainFeeedGuard } from './main-feeed.guard';
 import { ProfileGuard } from './profile.guard';
@@ -24,6 +26,11 @@ const routes: Routes = [
     path: 'feed',
     component: MainFeedComponent,
     canActivate: [MainFeeedGuard]
+  },
+  {
+    path: 'covid19',
+    component: CovidGraphComponent,
+    canActivate: [CovidGraphGuard]
   }
 ];
 
