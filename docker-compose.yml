@@ -14,5 +14,5 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "81:80"
+      - "80:80"
     container_name: usocial-front
