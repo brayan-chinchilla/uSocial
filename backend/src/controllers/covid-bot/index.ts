@@ -69,12 +69,17 @@ async function handleTipo(data: BotResponse): Promise<BotResponse> {
             return handleUnderstand(data, "Tipo no válido. Ingresalo de nuevo (confirmados, recuperados, muertes o todos)")
     }
 
-    const covid = await (await fetch('https://fherherand.github.io/covid-19-data-update/timeseries.json')).json();
-
-    const covidCountry: any[] = covid[metadata.casos.pais];
-
     const date = metadata.casos.fecha;
-    const result = covidCountry.filter(info => info.date === date);
+
+    const covid = await (await fetch('https://sssx0gfhtj.execute-api.us-east-1.amazonaws.com/produccion', {
+        method: 'POST',
+        body: JSON.stringify({
+            "fecha": date,
+            "pais": metadata.casos.pais
+        })
+    })).json();
+
+    const result = JSON.parse(covid.body);
 
     if (!(result.length > 0)) {
         return {
@@ -187,25 +192,19 @@ async function handleRangoFecha(data: BotResponse): Promise<BotResponse> {
         return handleUnderstand(data, "Rango de fecha inválido. Ingresalo de nuevo (dd-mm-yyyy a dd-mm-yyyy)");
     }
 
-    const covid = await (await fetch('https://fherherand.github.io/covid-19-data-update/timeseries.json')).json();
-
-    const covidCountry: any[] = covid[metadata.casos.pais];
-
     fromDate = `${fromYear}-${fromMonth}-${fromDay}`;
     toDate = `${toYear}-${toMonth}-${toDay}`;
-    let fromExists = false;
-    const result = [];
-    for (const info of covidCountry) {
-        if (fromExists) {
-            result.push(info);
-            if (info.date === toDate) break;
-        } else {
-            if (info.date === fromDate) {
-                result.push(info);
-                fromExists = true;
-            }
-        }
-    }
+
+    const covid = await (await fetch('https://sssx0gfhtj.execute-api.us-east-1.amazonaws.com/produccion/graph', {
+        method: 'POST',
+        body: JSON.stringify({
+            fromDate,
+            toDate,
+            "pais": metadata.casos.pais
+        })
+    })).json();
+
+    const result = JSON.parse(covid.body);
 
     return {
         message: {
