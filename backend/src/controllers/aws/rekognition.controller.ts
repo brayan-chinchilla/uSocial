@@ -21,3 +21,22 @@ export function compareFaces(S3PhotoUrl: string, base64: string) {
         }
     }).promise();
 }
+
+export function detectLabels(S3PhotoUrl: string){
+    const path = S3PhotoUrl.split('/');
+    const imageName = path.pop();
+    const folderName = path.pop();
+
+    const params = {
+        Image: {
+          S3Object: {
+            Bucket: bucketName,
+            Name: folderName + '/' + imageName
+          },
+        },
+        MaxLabels: 20,
+        MinConfidence: 75
+      }
+
+      return new Rekognition().detectLabels(params).promise();
+}

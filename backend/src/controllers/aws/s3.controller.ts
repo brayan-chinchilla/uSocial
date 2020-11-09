@@ -1,6 +1,6 @@
 import { S3 } from "aws-sdk";
 
-type S3FolderName = 'usuarios' | 'publicaciones';
+type S3FolderName = 'usuarios' | 'publicaciones' | 'posts';
 
 export const bucketName = 'pro2-images-grupo5';
 
