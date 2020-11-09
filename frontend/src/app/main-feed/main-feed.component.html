@@ -20,6 +20,7 @@
 
     <app-crear-post></app-crear-post>
 
-    
-    <app-post *ngFor="let post of postsCurrent" [post]="post"></app-post>
+    <div *ngFor="let post of postsCurrent">
+      <app-post  [post]="post" (newPostEvent)="newPost($event)"></app-post>
+    </div>
 </div>

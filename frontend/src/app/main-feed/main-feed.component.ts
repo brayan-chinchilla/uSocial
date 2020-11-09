@@ -39,4 +39,8 @@ export class MainFeedComponent implements OnInit {
     }, ({ error }: HttpErrorResponse) => { this.errorMessage = error.message; })
   }
 
+  newPost(post){
+    this.postsCurrent.unshift(post);
+  }
+
 }

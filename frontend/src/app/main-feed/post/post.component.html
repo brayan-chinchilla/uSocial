@@ -15,6 +15,7 @@
 
      <div class="mx-4" *ngIf="post.text">
         <p>{{post.text}}</p>
+        <p class="small">{{hashtags}}</p>
         <div *ngIf="post.needs_translation">
             <a class="small" (click)="translateText()">Translate</a>
             <p *ngIf="translatedText" class="font-italic">
