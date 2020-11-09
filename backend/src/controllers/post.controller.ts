@@ -5,13 +5,13 @@ import { saveImage } from "./aws/s3.controller";
 import { setResponse } from "./set-response";
 import PostModel from "../controllers/database/Post"
 import { detectLabels } from "./aws/rekognition.controller";
-import { translateText } from "./aws/translate.controller";
+import { translateText, detectLanguage } from "./aws/translate.controller";
 
 class PostController {
     public async newPost(req: Request, res: Response) {
-        const {text, image, username}:Post = req.body
+        const {text, image, user_id}:Post = req.body
 
-        if (!username || !image )
+        if (!user_id || !image )
             return setResponse(res, { statuscode: 400, ok: false, message: `Campos obligatorios: username, image`, data: {} });
 
         try {
@@ -24,7 +24,15 @@ class PostController {
                 labels.push(label.Name || "");
             })
 
-            const newPost = await PostModel.create({ _id: postId, username, image: imageUrl, text, timestamp: Date(), labels});
+            var needs_translation = false;
+            if(text){
+                try{
+                    const comprehend_res = await detectLanguage(text);
+                    //@ts-ignore
+                    needs_translation = comprehend_res.Languages[0].LanguageCode != "es";
+                }catch(e){}
+            }
+            const newPost = await PostModel.create({ _id: postId, user_id, image: imageUrl, text, timestamp: Date(), labels, needs_translation});
 
             return setResponse(res, { statuscode: 200, ok: true, message: ``, data: newPost });
         } catch (e) {
@@ -34,7 +42,7 @@ class PostController {
     }
 
     public async getPosts(req: Request, res: Response){
-        const username = req.params.username;
+        const user_id = req.params.user_id;
         const filter:any = {};
         if(req.body.labels){
             filter.labels = {$all: req.body.labels}
