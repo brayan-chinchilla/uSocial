@@ -13,8 +13,9 @@ interface BotMetadata {
     tipo: string;
   },
   grafica: {
-    pais: string;
-    rango: string;
+    fromDate: string;
+    toDate: string;
+    result: any[];
   }
 }
 
@@ -27,7 +28,7 @@ export class SocketIOAdapter extends ChatAdapter {
   private metadata: BotMetadata = {
     botStep: '',
     casos: { fecha: '', pais: '', tipo: '' },
-    grafica: { pais: '', rango: '' }
+    grafica: { fromDate: '', result: [], toDate: '' }
   };
 
   constructor(userId: string, loggedUserId: string, socket: Socket, http: HttpClient) {

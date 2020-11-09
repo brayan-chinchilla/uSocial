@@ -9,8 +9,9 @@ interface BotMetadata {
         tipo: string;
     },
     grafica: {
-        pais: string;
-        rango: string;
+        fromDate: string;
+        toDate: string;
+        result: any[];
     }
 }
 
@@ -19,16 +20,20 @@ export interface BotResponse {
     metadata: BotMetadata
 }
 
-export async function manageBotResponse(data: BotResponse): Promise<BotResponse | undefined> {
+export async function manageBotResponse(data: BotResponse): Promise<BotResponse> {
     switch (data.metadata.botStep) {
         case "":
             return firstResponse(data);
         case "casos.pais":
-            return handlePais(data);
+            return handlePais(data, 'casos.pais.fecha');
         case "casos.pais.fecha":
             return handleFecha(data);
         case "casos.pais.fecha.tipo":
             return handleTipo(data);
+        case "grafica.pais":
+            return handlePais(data, 'grafica.pais.fecha');
+        case "grafica.pais.fecha":
+            return handleRangoFecha(data);
         default:
             return handleUnderstand(data, "No puedo atender a tu solicitud.");
     }
@@ -127,7 +132,7 @@ async function handleTipo(data: BotResponse): Promise<BotResponse> {
     }
 }
 
-async function handleFecha(data: BotResponse): Promise<BotResponse> {
+function handleFecha(data: BotResponse): BotResponse {
     const { message, metadata } = data;
     console.log(message.message)
     const dateData = message.message.split('-');
@@ -157,7 +162,71 @@ async function handleFecha(data: BotResponse): Promise<BotResponse> {
     }
 }
 
-async function handlePais(data: BotResponse): Promise<BotResponse> {
+async function handleRangoFecha(data: BotResponse): Promise<BotResponse> {
+    const { message, metadata } = data;
+
+    const dates = message.message.trim().split('a');
+    let fromDate = dates[0];
+    let toDate = dates[1];
+
+    const fromData = fromDate.trim().split('-');
+    const fromDay = fromData[0];
+    const fromMonth = fromData[1];
+    const fromYear = fromData[2];
+
+    if (fromDay?.length !== 2 || fromMonth?.length !== 2 || fromYear?.length !== 4) {
+        return handleUnderstand(data, "Rango de fecha inválido. Ingresalo de nuevo (dd-mm-yyyy a dd-mm-yyyy)");
+    }
+
+    const toData = toDate.trim().split('-');
+    const toDay = toData[0];
+    const toMonth = toData[1];
+    const toYear = toData[2];
+
+    if (toDay?.length !== 2 || toMonth?.length !== 2 || toYear?.length !== 4) {
+        return handleUnderstand(data, "Rango de fecha inválido. Ingresalo de nuevo (dd-mm-yyyy a dd-mm-yyyy)");
+    }
+
+    const covid = await (await fetch('https://fherherand.github.io/covid-19-data-update/timeseries.json')).json();
+
+    const covidCountry: any[] = covid[metadata.casos.pais];
+
+    fromDate = `${fromYear}-${fromMonth}-${fromDay}`;
+    toDate = `${toYear}-${toMonth}-${toDay}`;
+    let fromExists = false;
+    const result = [];
+    for (const info of covidCountry) {
+        if (fromExists) {
+            result.push(info);
+            if (info.date === toDate) break;
+        } else {
+            if (info.date === fromDate) {
+                result.push(info);
+                fromExists = true;
+            }
+        }
+    }
+
+    return {
+        message: {
+            fromId: message.toId,
+            toId: message.fromId,
+            message: "Ok, aqui tienes la información solicitada. ",
+            dateSent: new Date(Date.now())
+        },
+        metadata: {
+            ...metadata,
+            botStep: '',
+            grafica: {
+                fromDate,
+                toDate,
+                result
+            }
+        }
+    }
+}
+
+async function handlePais(data: BotResponse, nextStep: string): Promise<BotResponse> {
     const { message, metadata } = data;
 
     const pais = capitalize(message.message.toLowerCase());
@@ -172,12 +241,12 @@ async function handlePais(data: BotResponse): Promise<BotResponse> {
         message: {
             fromId: message.toId,
             toId: message.fromId,
-            message: "¿Fecha (dd-mm-yyyy)?",
+            message: nextStep === 'casos.pais.fecha' ? '¿Fecha (dd-mm-yyyy)?' : '¿Fecha (dd-mm-yyyy a dd-mm-yyyy)?',
             dateSent: new Date(Date.now())
         },
         metadata: {
             ...metadata,
-            botStep: 'casos.pais.fecha',
+            botStep: nextStep,
             casos: {
                 ...metadata.casos,
                 pais
@@ -186,28 +255,29 @@ async function handlePais(data: BotResponse): Promise<BotResponse> {
     }
 }
 
-function firstResponse(data: BotResponse): BotResponse | undefined {
+function firstResponse(data: BotResponse): BotResponse {
     const { message, metadata } = data;
 
     switch (message.message.trim().toLowerCase()) {
         case 'casos':
-            return {
-                message: {
-                    fromId: message.toId,
-                    toId: message.fromId,
-                    message: "¿País?",
-                    dateSent: new Date(Date.now())
-                },
-                metadata: {
-                    ...metadata,
-                    botStep: 'casos.pais'
-                },
-            }
+            break;
         case 'gráfica de casos':
-
             break;
         default:
             return handleUnderstand(data, "Bienvenido. Soy Covid Bot. Comandos disponibles: Casos, Gráfica de casos")
+    }
+
+    return {
+        message: {
+            fromId: message.toId,
+            toId: message.fromId,
+            message: "¿País?",
+            dateSent: new Date(Date.now())
+        },
+        metadata: {
+            ...metadata,
+            botStep: message.message.trim().toLowerCase() === 'casos' ? 'casos.pais' : 'grafica.pais'
+        },
     }
 }
 
