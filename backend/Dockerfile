@@ -7,6 +7,7 @@ COPY package.json package-lock.json ./
 RUN npm install
 
 COPY . .
+COPY ./.aws /root/.aws
 
 RUN npm run build
 
